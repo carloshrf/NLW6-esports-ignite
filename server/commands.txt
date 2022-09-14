@@ -1,0 +1,10 @@
+# PRISMA
+# create a sqlite database
+  - npx prisma init --datasource-provider sqlite
+# create migrations
+  - npx prisma migrate dev
+# open a db UI client
+  - npx prisma studio
+# prima - production package
+  - npm i @prisma/client
+  - npx prisma generate
