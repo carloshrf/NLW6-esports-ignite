@@ -9,6 +9,7 @@ import { GameCard, GameCardProps } from '../../components/GameCard';
 import { Heading } from '../../components/Heading';
 
 import { styles } from './styles';
+import process from '../../../.env'
 
 export function Home() {
 
@@ -21,7 +22,7 @@ export function Home() {
   }
 
   useEffect(() => {
-    fetch('http://192.168.1.3:3333/games')
+    fetch(`${process.env.BASE_URL}/games`)
       .then(response => response.json())
       .then(data => setGames(data))
   }, [])

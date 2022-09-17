@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GameParams } from '../../@types/navigation';
 import { Background } from '../../components/Background';
 import { Entypo } from '@expo/vector-icons';
+import process from '../../../.env'
+
 import logoImg from '../../assets/logo-nlw-esports.png';
 
 import { styles } from './styles';
@@ -11,10 +13,12 @@ import { THEME } from '../../theme';
 import { Heading } from '../../components/Heading';
 import { DuoCard, DuoCardProps } from '../../components/DuoCard';
 import { useEffect, useState } from 'react';
+import { DuoMatch } from '../../components/DuoMatch';
 
 export function Game() {
 
   const [duos, setDuos] = useState<DuoCardProps[]>([]);
+  const [discordDuoSelected, setDiscordDuoSelected] = useState('');
 
   const navigation = useNavigation();
   const route = useRoute();
@@ -25,8 +29,14 @@ export function Game() {
     navigation.goBack();
   }
 
+  async function getDiscordUser(adsId: string) {
+    fetch(`${process.env.BASE_URL}/ads/${adsId}/discord`)
+      .then(response => response.json())
+      .then(({discord}) => setDiscordDuoSelected(discord));
+  }
+
   useEffect(() => {
-    fetch(`http://192.168.1.3:3333/games/${game.id}/ads`)
+    fetch(`${process.env.BASE_URL}/games/${game.id}/ads`)
       .then(response => response.json())
       .then(data => setDuos(data));
   }, [])
@@ -66,7 +76,7 @@ export function Game() {
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
             <DuoCard
-              onConnect={() => {}}
+              onConnect={() => getDiscordUser(item.id)}
               data={item}
             />
           )}
@@ -79,6 +89,12 @@ export function Game() {
               Não há anúncios publicados para esse jogo... :(
             </Text>
           )}
+        />
+
+        <DuoMatch
+          visible={discordDuoSelected.length > 0}
+          discord={discordDuoSelected}
+          onClose={() => setDiscordDuoSelected('')}
         />
       </SafeAreaView>
     </Background>
